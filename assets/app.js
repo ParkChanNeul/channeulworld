@@ -76,9 +76,7 @@ const mount = async (el) => {
     const tip    = numVal('#tip');
     const people = Math.max(1, numVal('#people'));
 
-    const total =
-      amount * (1 + vat / 100) * (1 + tip / 100);
-
+    const total = amount * (1 + vat / 100) * (1 + tip / 100);
     const each = isFinite(total / people)
       ? Math.ceil(total / people)
       : 0;
@@ -105,16 +103,13 @@ const mount = async (el) => {
         await navigator.clipboard.writeText(url);
         alert('링크가 복사되었습니다.');
       }
-    } catch {
-      /* 사용자가 취소한 경우 등 무시 */
-    }
+    } catch {}
   };
 
   $('#run').addEventListener('click', onRun);
   $('#reset').addEventListener('click', onReset);
   $('#share').addEventListener('click', onShare);
 
-  // cleanup fn
   return () => {
     $('#run')?.removeEventListener('click', onRun);
     $('#reset')?.removeEventListener('click', onReset);
