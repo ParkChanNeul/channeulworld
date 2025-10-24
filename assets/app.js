@@ -1,189 +1,134 @@
-import { startRouter, setRouteIndicator } from '/assets/router.js';
-import { AppRunner } from '/assets/app-runner.js';
+const template = /*html*/ `
+<section class="card" style="margin-top:16px;display:flex;flex-direction:column;gap:12px;">
+  <div style="display:flex;align-items:flex-start;gap:12px;">
+    <svg width="64" height="64" aria-hidden="true"><use href="#thumb-calc"/></svg>
+    <div>
+      <h1 class="card-title" style="margin:0;">더치페이 계산기</h1>
+      <p class="card-desc" style="margin:4px 0 0;color:var(--muted);">
+        부가세·팁 포함 총액을 인원별로 나눕니다.
+      </p>
+    </div>
+  </div>
 
-const qs = (s, el=document) => el.querySelector(s);
-const qsa = (s, el=document) => [...el.querySelectorAll(s)];
+  <div class="row"
+    style="display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;">
+    <label for="amount">총액</label>
+    <input id="amount" type="number" placeholder="82500"
+      style="border:1px solid var(--line);background:var(--card-bg);color:var(--fg);
+             border-radius:var(--radius-sm);padding:8px 10px;min-width:120px;"/>
+  </div>
 
-const STORE_KEY = 'channeul::state';
-const defaultState = {
-  theme: null, // "light" | "dark"
-  lang: 'kr',  // "kr" | "en"
-  favs: [],    // ["calc-split", ...]
-};
+  <div class="row"
+    style="display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;">
+    <label for="vat">부가세(%)</label>
+    <input id="vat" type="number" value="0"
+      style="border:1px solid var(--line);background:var(--card-bg);color:var(--fg);
+             border-radius:var(--radius-sm);padding:8px 10px;min-width:120px;"/>
+  </div>
 
-const loadState = () => {
-  try {
-    return JSON.parse(localStorage.getItem(STORE_KEY)) || { ...defaultState };
-  } catch {
-    return { ...defaultState };
-  }
-};
+  <div class="row"
+    style="display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;">
+    <label for="tip">팁(%)</label>
+    <input id="tip" type="number" value="0"
+      style="border:1px solid var(--line);background:var(--card-bg);color:var(--fg);
+             border-radius:var(--radius-sm);padding:8px 10px;min-width:120px;"/>
+  </div>
 
-const saveState = (st) => {
-  localStorage.setItem(STORE_KEY, JSON.stringify(st));
-};
+  <div class="row"
+    style="display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;">
+    <label for="people">인원</label>
+    <input id="people" type="number" value="2" min="1"
+      style="border:1px solid var(--line);background:var(--card-bg);color:var(--fg);
+             border-radius:var(--radius-sm);padding:8px 10px;min-width:120px;"/>
+  </div>
 
-let state = loadState();
+  <div class="card-actions" style="margin-top:4px;">
+    <button id="run" class="btn primary" type="button">
+      <svg width="18" height="18" aria-hidden="true"
+        style="margin-right:4px;"><use href="#i-run"/></svg> 실행
+    </button>
 
-/**
- * THEME HANDLING
- * - prefers-color-scheme 반영
- * - localStorage 저장
- * - 토글 버튼(헤더)에서 아이콘 업데이트
- */
-const initTheme = () => {
-  const prefersDark = () =>
-    window.matchMedia?.('(prefers-color-scheme: dark)')?.matches;
+    <button id="share" class="btn ghost" type="button">
+      <svg width="18" height="18" aria-hidden="true"
+        style="margin-right:4px;"><use href="#i-share"/></svg> 공유
+    </button>
 
-  if (state.theme === null) {
-    state.theme = prefersDark() ? 'dark' : 'light';
-    saveState(state);
-  }
+    <button id="reset" class="btn ghost" type="button">
+      <svg width="18" height="18" aria-hidden="true"
+        style="margin-right:4px;"><use href="#i-reset"/></svg> 리셋
+    </button>
+  </div>
 
-  const applyTheme = () => {
-    document.documentElement.dataset.theme = state.theme;
-    const isDark = state.theme === 'dark';
-    const btn = qs('#themeToggle');
-    if (btn) {
-      btn.textContent = isDark ? '🌙' : '☀️';
-      btn.setAttribute('aria-pressed', String(isDark));
-    }
+  <div id="out" class="result"
+    style="font-weight:700;font-size:16px;">1인 금액: -</div>
+</section>
+`;
+
+const mount = async (el) => {
+  el.insertAdjacentHTML('beforeend', template);
+
+  const $ = (sel) => el.querySelector(sel);
+  const numVal = (sel) => Number($(sel).value || 0);
+
+  const calc = () => {
+    const amount = numVal('#amount');
+    const vat    = numVal('#vat');
+    const tip    = numVal('#tip');
+    const people = Math.max(1, numVal('#people'));
+
+    const total =
+      amount * (1 + vat / 100) * (1 + tip / 100);
+
+    const each = isFinite(total / people)
+      ? Math.ceil(total / people)
+      : 0;
+
+    $('#out').textContent =
+      `1인 금액: ${each.toLocaleString()}원`;
   };
 
-  qs('#themeToggle')?.addEventListener('click', () => {
-    state.theme = state.theme === 'dark' ? 'light' : 'dark';
-    saveState(state);
-    applyTheme();
-  });
-
-  applyTheme();
-};
-
-/**
- * LANGUAGE HANDLING
- * - 지금은 텍스트 일부만 바꾼다 (hero copy 대신 섹션 안내 정도)
- * - 실제 다국어 전환은 추후 카드 title/desc에 i18n map 추가해서 확장
- */
-const initLang = () => {
-  const I18N = {
-    kr: {
-      placeholder: '검색 (예: 더치페이, QR, 세후 월급)',
-    },
-    en: {
-      placeholder: 'Search (e.g. split bill, QR code, after-tax pay)',
-    },
+  const onRun = () => { calc(); };
+  const onReset = () => {
+    $('#amount').value = '';
+    $('#vat').value = '0';
+    $('#tip').value = '0';
+    $('#people').value = '2';
+    $('#out').textContent = '1인 금액: -';
   };
-
-  const applyLang = () => {
-    const t = I18N[state.lang] || I18N.kr;
-    document.documentElement.lang = state.lang === 'en' ? 'en' : 'ko';
-    const searchInput = qs('#globalSearch');
-    if (searchInput) {
-      searchInput.placeholder = t.placeholder;
-    }
-    qs('#langToggle')?.setAttribute(
-      'aria-pressed',
-      String(state.lang === 'en')
-    );
-  };
-
-  qs('#langToggle')?.addEventListener('click', () => {
-    state.lang = state.lang === 'kr' ? 'en' : 'kr';
-    saveState(state);
-    applyLang();
-  });
-
-  applyLang();
-};
-
-/**
- * FAVORITES
- * - 즐겨찾기 토글 시 localStorage 반영
- * - 초기 로드시 버튼 상태(★ / ☆) 세팅
- */
-const initFavs = () => {
-  const applyFavUI = () => {
-    qsa('.fav').forEach((btn) => {
-      const app = btn.dataset.app;
-      const on = state.favs.includes(app);
-      btn.setAttribute('aria-pressed', String(on));
-      btn.textContent = on ? '★' : '☆';
-    });
-  };
-
-  qsa('.fav').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const app = btn.dataset.app;
-      if (state.favs.includes(app)) {
-        state.favs = state.favs.filter((x) => x !== app);
+  const onShare = async () => {
+    const url = location.href;
+    const text = '더치페이 계산기 — channeul.world';
+    try {
+      if (navigator.share) {
+        await navigator.share({ title:text, text, url });
       } else {
-        state.favs = [...state.favs, app];
+        await navigator.clipboard.writeText(url);
+        alert('링크가 복사되었습니다.');
       }
-      saveState(state);
-      applyFavUI();
-    });
-  });
-
-  applyFavUI();
-};
-
-/**
- * SEARCH / FILTER HOOK
- * - 지금은 전체 텍스트에 대해 단순 포함 검색
- * - 추후 카테고리별 필터, GEO필터 등 확장 가능
- */
-const initSearch = () => {
-  const input = qs('#globalSearch');
-  if (!input) return;
-
-  const runFilter = () => {
-    const q = (input.value || '').trim().toLowerCase();
-    // 필터 기준: 카드 전체 텍스트
-    qsa('.cards-grid .card').forEach((card) => {
-      const txt = (card.textContent || '').toLowerCase();
-      card.style.display = txt.includes(q) ? '' : 'none';
-    });
-    // CTA 리스트는 숨기지 않음 (바로가기 섹션은 계속 보여줄 가치가 있음)
+    } catch {
+      /* 사용자가 취소한 경우 등 무시 */
+    }
   };
 
-  input.addEventListener('input', runFilter);
+  $('#run').addEventListener('click', onRun);
+  $('#reset').addEventListener('click', onReset);
+  $('#share').addEventListener('click', onShare);
+
+  // cleanup fn
+  return () => {
+    $('#run')?.removeEventListener('click', onRun);
+    $('#reset')?.removeEventListener('click', onReset);
+    $('#share')?.removeEventListener('click', onShare);
+  };
 };
 
-/**
- * POPULARITY / ANALYTICS PLACEHOLDER
- * - prod에서만 Netlify function을 불러서 인기 지표 반영할 예정
- * - 지금은 기능 비활성
- */
-const initPopularity = () => {
-  // placeholder no-op
-};
+const unmount = () => {};
 
-/**
- * YEAR FOOTER
- */
-const initYear = () => {
-  const y = qs('#year');
-  if (y) y.textContent = new Date().getFullYear();
+export default {
+  meta: {
+    title: '더치페이 계산기',
+    desc: '부가세·팁 포함 금액 n-way split',
+  },
+  mount,
+  unmount,
 };
-
-/**
- * ROUTER INIT
- * - #/app/slug 로 들어오면 home-view 숨기고 app-view mount
- * - #/favorites, #/popular 등은 차후 구현
- */
-const initRouter = () => {
-  startRouter();
-  setRouteIndicator();
-};
-
-const boot = () => {
-  initYear();
-  initTheme();
-  initLang();
-  initFavs();
-  initSearch();
-  initPopularity();
-  initRouter();
-};
-
-window.addEventListener('DOMContentLoaded', boot);
