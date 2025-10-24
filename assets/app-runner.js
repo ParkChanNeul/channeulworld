@@ -20,11 +20,9 @@ export const AppRunner = (() => {
     await unmount();
 
     try {
-      // 앱 모듈을 동적으로 import
       const url = `/apps/${slug}/app.js`;
       const { default: api } = await import(/* @vite-ignore */ url);
 
-      // mount
       const cleanup = await api?.mount?.(mountEl, {});
       current = { slug, api, cleanup };
 
