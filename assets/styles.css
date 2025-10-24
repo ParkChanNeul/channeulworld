@@ -1,0 +1,70 @@
+:root{
+  --bg:#ffffff; --fg:#0f172a; --muted:#475569; --card:#f8fafc; --line:#e2e8f0;
+  --brand:#111827; --accent:#2563eb; --radius:16px; --gap:16px; --shell:clamp(320px, 90vw, 840px);
+}
+:root[data-theme="dark"]{
+  --bg:#0b1220; --fg:#e5e7eb; --muted:#9aa1ac; --card:#0f172a; --line:#1f2937; --brand:#e5e7eb; --accent:#60a5fa;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme]){ --bg:#0b1220; --fg:#e5e7eb; --muted:#9aa1ac; --card:#0f172a; --line:#1f2937; --brand:#e5e7eb; --accent:#60a5fa; }
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:Pretendard,system-ui,-apple-system,Segoe UI,Roboto,Noto Sans,"Apple SD Gothic Neo",Arial,sans-serif;background:var(--bg);color:var(--fg);line-height:1.6}
+.shell{width:var(--shell); margin:0 auto; padding:0 16px}
+.sr-only{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+.skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+.skip-link:focus{left:16px;top:16px;width:auto;height:auto;background:var(--accent);color:#fff;padding:8px 12px;border-radius:8px}
+.site-header{position:sticky;top:0;z-index:20;backdrop-filter:saturate(180%) blur(8px);
+  background:color-mix(in oklab,var(--bg),#0000 12%); border-bottom:1px solid var(--line)}
+.site-header .shell{display:flex;align-items:center;justify-content:space-between;height:56px}
+.brand-link{color:var(--brand);text-decoration:none;font-weight:700;letter-spacing:.2px}
+.header-actions{display:flex;gap:8px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);
+  background:var(--card); color:var(--fg); text-decoration:none; cursor:pointer; user-select:none; transition:transform .05s ease, background .2s ease}
+.btn:hover{transform:translateY(-1px)} .btn:active{transform:translateY(0)}
+.btn.primary{background:var(--accent); color:#fff; border-color:color-mix(in oklab,var(--accent),#000 10%)}
+.btn.ghost{background:transparent} .btn.sm{padding:6px 10px;font-size:14px}
+.btn.icon{height:40px;padding:0 12px;font-size:18px}
+.hero{padding:24px 0 8px}
+.hero h1{margin:0 0 8px; font-size:clamp(22px,4vw,28px)}
+.hero .sub{margin:0;color:var(--muted)}
+.toolbar{position:sticky;top:56px;z-index:10;background:var(--bg);padding:8px 0;border-bottom:1px solid var(--line);
+  display:grid;grid-template-columns:1fr;gap:8px}
+.search input{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--fg)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);cursor:pointer}
+.chip[aria-pressed="true"]{outline:2px solid var(--accent)}
+.grid{display:grid;grid-template-columns:1fr;gap:12px;padding:16px 0 24px}
+@media (min-width:600px){ .grid{ grid-template-columns: 1fr 1fr; } }
+.card{display:grid;grid-template-columns:auto 1fr;gap:12px;padding:16px;border-radius:16px;background:var(--card);border:1px solid var(--line)}
+.card-media{display:grid;place-items:center}
+.thumb{width:64px;height:64px}
+.card-title{margin:0 0 4px;font-size:18px}
+.card-desc{margin:0 0 6px;color:var(--muted)}
+.card-meta{font-size:12px;color:var(--muted);margin-bottom:8px}
+.card-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.site-footer{border-top:1px solid var(--line)}
+.site-footer .shell{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0 72px}
+.footer-links{display:flex;gap:12px}
+.footer-links a{color:var(--muted);text-decoration:none}
+.footer-links a:hover{text-decoration:underline}
+.bottom-nav{position:fixed;left:0;right:0;bottom:0;height:56px;display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);background:var(--bg)}
+.bn-item{display:flex;gap:6px;align-items:center;justify-content:center;text-decoration:none;color:var(--muted);font-size:14px}
+.bn-item[aria-current="page"]{color:var(--fg);font-weight:600}
+@media (min-width:1200px){.bottom-nav{display:none}}
+:where(a,button,input,.chip,.btn){outline:none}
+:where(a,button,input,.chip,.btn):focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:10px}
+@media (min-width: 1200px) {
+  .slot-left, .slot-right {
+    position: fixed; top: 88px;
+    width: min(20vw, 300px); height: min(80vh, 900px);
+    background: repeating-linear-gradient(45deg,#eef,#eef 10px,#dde 10px,#dde 20px);
+    border: 1px solid #cbd5e1; border-radius: 12px;
+    display: grid; place-items: center;
+    color: #334155; font-size: 12px;
+    z-index: 5;
+  }
+  .slot-left  { left:  max(8px, calc((100vw - 840px)/2 - 316px)); }
+  .slot-right { right: max(8px, calc((100vw - 840px)/2 - 316px)); }
+}
