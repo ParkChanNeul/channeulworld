@@ -9,19 +9,15 @@
   <link rel="stylesheet" href="/assets/styles.css" />
 </head>
 <body>
-  <!-- 접근성용 스킵 링크 -->
   <a class="skip-link" href="#main">Skip to content</a>
 
-  <!-- 상단 헤더 (브랜드/검색/토글 등) -->
   <header class="site-header" role="banner" aria-label="Site header">
     <div class="header-inner">
-      <!-- 브랜드 + 버전 뱃지 -->
       <div class="brand-block">
         <a href="#/" class="brand" aria-label="Home">channeul.world</a>
-        <span class="chip chip-beta">beta</span>
+        <span class="chip-beta">beta</span>
       </div>
 
-      <!-- 글로벌 검색 -->
       <div class="search-block">
         <label for="globalSearch" class="sr-only">검색</label>
         <input
@@ -33,7 +29,6 @@
         />
       </div>
 
-      <!-- 액션들: 언어 / 테마 / 더보기 -->
       <nav class="header-actions" aria-label="Global actions">
         <button id="langToggle" class="btn ghost sm" type="button" aria-pressed="false">KR / EN</button>
         <button id="themeToggle" class="btn ghost sm" type="button" aria-pressed="false" aria-label="Toggle theme">☀️</button>
@@ -41,7 +36,6 @@
       </nav>
     </div>
 
-    <!-- 섹션 점프 바 (모바일/태블릿에서 좌측 내비 대신) -->
     <nav class="section-jump" aria-label="섹션 바로가기">
       <a href="#sec-calc" class="jump-item">계산 · 정산</a>
       <a href="#sec-util" class="jump-item">생활 · 유틸</a>
@@ -50,9 +44,7 @@
     </nav>
   </header>
 
-  <!-- 전체 레이아웃: 좌측 내비 / 메인 / 우측 광고 -->
   <div class="layout-shell">
-    <!-- 좌측 내비 (데스크톱 전용) -->
     <aside class="side-left" aria-label="카테고리 내비게이션">
       <nav class="side-left-nav" aria-label="주요 섹션">
         <div class="side-left-group">
@@ -75,12 +67,8 @@
       </div>
     </aside>
 
-    <!-- 메인 컨텐츠 -->
     <main id="main" class="main-col" role="main" tabindex="-1" aria-live="polite">
-
-      <!-- HOME VIEW: 카테고리 4개 + 인피드 광고 -->
       <section id="home-view">
-        <!-- 섹션: 계산 · 정산 -->
         <section id="sec-calc" class="cat-block">
           <header class="cat-head">
             <h2 class="cat-title">계산 · 정산</h2>
@@ -88,7 +76,6 @@
           </header>
 
           <div class="cards-grid" data-cat="calc">
-            <!-- 카드: 더치페이 계산기 -->
             <article class="card" data-slug="calc-split" data-cats="calc compute">
               <div class="card-main">
                 <div class="card-icon">
@@ -109,7 +96,6 @@
               </div>
             </article>
 
-            <!-- 예: 세후 월급 계산기(placeholder) -->
             <article class="card disabled" data-slug="paycheck-aftertax" data-cats="calc salary">
               <div class="card-main">
                 <div class="card-icon">
@@ -132,20 +118,17 @@
           </div>
         </section>
 
-        <!-- (모바일/태블릿에서만 노출되는 인피드 광고 슬롯) -->
         <aside class="ad-slot-infeed" aria-label="광고">
           <div class="ad-box">광고 영역 (in-feed)</div>
         </aside>
 
-        <!-- 섹션: 생활 · 유틸 -->
         <section id="sec-util" class="cat-block">
           <header class="cat-head">
             <h2 class="cat-title">생활 · 유틸</h2>
-            <p class="cat-desc">매일 쓰는 자잘한 도구들. QR, 변환기, 메모성 툴까지 전부 한 화면에서.</p>
+            <p class="cat-desc">매일 쓰는 자잘한 도구들. QR, 변환기, 메모성 툴까지 한 화면에서.</p>
           </header>
 
           <div class="cards-grid" data-cat="util">
-            <!-- 카드: QR 생성기 -->
             <article class="card disabled" data-slug="qr-lite" data-cats="util qr">
               <div class="card-main">
                 <div class="card-icon">
@@ -166,7 +149,6 @@
               </div>
             </article>
 
-            <!-- 카드: 오늘의 운세 (라이트 콘텐츠) -->
             <article class="card disabled" data-slug="fortune-today" data-cats="util fun fortune">
               <div class="card-main">
                 <div class="card-icon">
@@ -186,11 +168,9 @@
                 <button class="btn icon fav" data-app="fortune-today" aria-pressed="false" title="즐겨찾기">☆</button>
               </div>
             </article>
-
           </div>
         </section>
 
-        <!-- 섹션: 트렌드 · 분석 (작게 유지) -->
         <section id="sec-trend" class="cat-block">
           <header class="cat-head">
             <h2 class="cat-title">트렌드 · 분석</h2>
@@ -219,7 +199,6 @@
           </div>
         </section>
 
-        <!-- 섹션: 바로 가기 (제휴 / 커뮤니티 / 아웃바운드 CTA) -->
         <section id="sec-cta" class="cat-block">
           <header class="cat-head">
             <h2 class="cat-title">바로 가기</h2>
@@ -246,7 +225,7 @@
             <li class="cta-item">
               <div class="cta-texts">
                 <div class="cta-title">추천 카드/혜택 모음</div>
-                <div class="cta-desc">현금성 리워드 위주로만 정리한 리스팅</div>
+                <div class="cta-desc">현금성 리워드 중심으로만 정리</div>
               </div>
               <a class="btn ghost sm" href="#" rel="noopener">바로가기</a>
             </li>
@@ -254,11 +233,9 @@
         </section>
       </section>
 
-      <!-- APP VIEW: 라우터가 이 영역에 각 앱 mount -->
       <section id="app-view" hidden aria-live="polite"></section>
     </main>
 
-    <!-- 우측 광고 컬럼 (데스크톱 전용) -->
     <aside class="side-right" aria-label="광고 영역">
       <div class="ad-slot-display">
         <div class="ad-box">광고 영역 (display)</div>
@@ -266,7 +243,6 @@
     </aside>
   </div>
 
-  <!-- 하단 고정 내비 (모바일/태블릿 전용) -->
   <nav class="bottom-nav" aria-label="Bottom navigation">
     <a href="#/" class="bn-item" data-route="home" aria-current="page">
       <svg width="20" height="20" aria-hidden="true"><use href="#i-home"/></svg>
@@ -282,7 +258,6 @@
     </a>
   </nav>
 
-  <!-- SVG sprite (아이콘, 썸네일) -->
   <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
     <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
       stroke-linecap="round" stroke-linejoin="round">
@@ -333,7 +308,6 @@
     </symbol>
   </svg>
 
-  <!-- App logic -->
   <script type="module" src="/assets/app.js"></script>
 </body>
 </html>
